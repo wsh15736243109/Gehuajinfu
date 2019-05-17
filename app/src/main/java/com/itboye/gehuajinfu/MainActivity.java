@@ -1,17 +1,16 @@
 package com.itboye.gehuajinfu;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.ProgressBar;
-import com.itboye.gehuajinfu.util.Const;
+import android.widget.Toast;
 
 import static android.view.KeyEvent.KEYCODE_BACK;
 
@@ -27,35 +26,29 @@ public class MainActivity extends Activity {
         initView();
     }
 
+    @SuppressLint({"AddJavascriptInterface", "SetJavaScriptEnabled"})
     private void initView() {
+        startActivity(new Intent(this, WebActivity.class));
         mWebView = findViewById(R.id.webView);
         web_progress = findViewById(R.id.web_progress);
-        mWebView.loadUrl(Const.URL);
-
+        mWebView.addJavascriptInterface(new JSInterface(), "android");
         WebSettings webSettings = mWebView.getSettings();
-//如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        //设置支持JavaScript
+        webSettings.setLoadWithOverviewMode(true);
         webSettings.setJavaScriptEnabled(true);
-// 若加载的 html 里有JS 在执行动画等操作，会造成资源浪费（CPU、电量）
-// 在 onStop 和 onResume 里分别把 setJavaScriptEnabled() 给设置成 false 和 true 即可
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setDomStorageEnabled(true);//开启DOM storage API功能
+//        webSettings.supportMultipleWindows();
+//        webSettings.setAllowContentAccess(true);
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        webSettings.setUseWideViewPort(true);
+//        webSettings.setSavePassword(true);
+//        webSettings.setSaveFormData(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setLoadsImagesAutomatically(true);
 
-//支持插件
-//        webSettings.setPluginsEnabled(true);
 
-//设置自适应屏幕，两者合用
-        webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
-        webSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
-
-//缩放操作
-        webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
-        webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
-        webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
-
-//其他细节操作
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
-        webSettings.setAllowFileAccess(true); //设置可以访问文件
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
-        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
-        webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+//        mWebView.loadUrl(Const.URL);
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -74,8 +67,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("KeithXiaoY", "Url：" + url);
-                view.loadUrl(url);// 强制在当前 WebView 中加载 url
-                return true;
+                return super.shouldOverrideUrlLoading(view, url);
             }
         });
 
@@ -92,19 +84,44 @@ public class MainActivity extends Activity {
                 }
             }
 
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                Log.d("KeithXiaoY", "标题：" + title);
-            }
         });
+
+        mWebView.loadUrl("file:///android_asset/html/config_detail.html");
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KEYCODE_BACK) && mWebView.canGoBack()) {
+//            ShareUtil.shareUrl(this,"http:www.baidu.com","分享测试","分享描述", BitmapFactory.decodeResource(getResources(),R.mipmap.logo),1);
+//            ShareUtil.shareUrl(this,"http:www.baidu.com","分享测试","分享描述", BitmapFactory.decodeResource(getResources(),R.mipmap.logo),2);
+//            ShareUtil.shareToQQ(this);
             mWebView.goBack();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    class JSInterface {
+
+        @JavascriptInterface
+        void getSomeThing() {
+            Toast.makeText(MainActivity.this, "开始分享", Toast.LENGTH_SHORT).show();
+        }
+
+//        @JavascriptInterface
+//        void shareToWxFriends() {
+//            ShareUtil.shareUrl(MainActivity.this, "http:www.baidu.com", "分享测试", "分享描述", BitmapFactory.decodeResource(getResources(), R.mipmap.logo), 1);
+//        }
+//
+//        @JavascriptInterface
+//        void shareToWxCircleOfFriends() {
+//            ShareUtil.shareUrl(MainActivity.this, "http:www.baidu.com", "分享测试", "分享描述", BitmapFactory.decodeResource(getResources(), R.mipmap.logo), 1);
+//        }
+//
+//        @JavascriptInterface
+//        void shareToQQ() {
+//            ShareUtil.shareToQQ(MainActivity.this);
+//        }
+        //
+    }
+
 }
