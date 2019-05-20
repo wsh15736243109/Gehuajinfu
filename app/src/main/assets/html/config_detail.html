@@ -40,12 +40,15 @@
     </style>
     <script type="text/javascript">
         <!--获取展示当前版本号-->
-        function getVersionCode(versionCode) {
-            document.getElementById("version_code").innerHTML = (versionCode)
+        function getVersionCode() {
+            alert("test");
+            window.android.getSomeThing()
+            window.location.herf=""
+            // document.getElementById("version_code").innerHTML = (versionCode)
         }
-        
-        function sum(a,b) {
-            return a+b;
+
+        function sum(a, b) {
+            return a + b;
         }
     </script>
 </head>
@@ -53,7 +56,7 @@
 APP INFO：
 <div id="version_code"></div>
 <input id="login_click" style="text-align:left; vertical-align:middle" type="submit" value="click" class="login_click"
-       onclick="window.android.getSomeThing()"/>
+       onclick="getVersionCode()"/>
 <!--<input id="input" type="file" accept="image/*"/>-->
 </body>
 </html>

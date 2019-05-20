@@ -8,7 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import com.itboye.gehuajinfu.App;
-import com.itboye.gehuajinfu.MainActivity;
+import com.itboye.gehuajinfu.R;
+import com.itboye.gehuajinfu.WebActivity;
 import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -90,7 +91,7 @@ public class ShareUtil {
         params.putString(QQShare.SHARE_TO_QQ_SUMMARY, content);
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, url);
         params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrl);
-        params.putString(QQShare.SHARE_TO_QQ_APP_NAME, "革华金服");
+        params.putString(QQShare.SHARE_TO_QQ_APP_NAME, activity.getString(R.string.app_name));
 //        params.putInt(QQShare.SHARE_TO_QQ_EXT_INT,  "其他附加功能");
         App.getInstance().getmTencent().shareToQQ(activity, params, new UiListener());
     }
@@ -104,7 +105,7 @@ public class ShareUtil {
 
         @Override
         public void onError(UiError uiError) {
-            Toast.makeText(App.getInstance(), "分享失败" + uiError.errorMessage, Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "分享失败:" + uiError.errorMessage, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -149,5 +150,18 @@ public class ShareUtil {
             i = bmp.getHeight();
             j = bmp.getHeight();
         }
+    }
+
+    public static void downLoadBitmap(Activity activity, String icon_url, final DownLoadCallBack downLoadCallBack) {
+        DownloadTask downLoadtask = new DownloadTask(activity, icon_url, new DownloadTask.DownLoadCallback() {
+
+            @Override
+            public void downloadFinish(Bitmap bitmap) {
+                if (downLoadCallBack != null) {
+                    downLoadCallBack.downloadSuccess(bitmap);
+                }
+            }
+        });
+        downLoadtask.execute(icon_url);
     }
 }
