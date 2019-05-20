@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SplashActivity extends Activity {
 
 
@@ -17,8 +20,12 @@ public class SplashActivity extends Activity {
     }
 
     private void initView() {
-
-
+//        List listAll=new ArrayList();
+//        List list=new ArrayList();
+//        list.add(1);
+//        list.add("");
+//        list.add('c');
+//        listAll.addAll(list);
     }
 
     @Override

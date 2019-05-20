@@ -1,24 +1,34 @@
 package com.itboye.gehuajinfu
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import android.support.annotation.RequiresApi
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.View
 import android.webkit.*
-import android.widget.TextView
 import android.widget.Toast
 import com.itboye.gehuajinfu.util.Const
-import com.itboye.gehuajinfu.util.DownLoadCallBack
 import com.itboye.gehuajinfu.util.ShareUtil
 import com.itboye.gehuajinfu.util.ShareUtil.downLoadBitmap
 import kotlinx.android.synthetic.main.activity_main.*
-import android.content.Intent
-import android.webkit.ValueCallback
-import android.provider.MediaStore
+import java.io.File
+import java.io.File.separator
+import com.itboye.gehuajinfu.util.ImageUtil.compressImage
+import java.io.FileNotFoundException
+import java.io.IOException
 
 
 class WebActivity : Activity() {
@@ -66,11 +76,11 @@ class WebActivity : Activity() {
 
             override fun onReceivedError(view: WebView, request: WebResourceRequest?, error: WebResourceError?) {
                 super.onReceivedError(view, request, error)
-                Log.v(TAG, "onReceivedError-------------" + Const.URL)
+                Log.v(TAG, "onReceivedError-------------" + error.toString())
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, innerUrl: String?): Boolean {
-                view.loadUrl(innerUrl)
+//                view.loadUrl("http://www.baidu.com")
                 Log.v(TAG, "shouldOverrideUrlLoading-------------" + innerUrl)
                 return true
             }
@@ -91,15 +101,13 @@ class WebActivity : Activity() {
              */
             fun openFileChooser(uploadMsg: ValueCallback<Uri>, acceptType: String, capture: String) {
                 mUploadCallbackBelow = uploadMsg
-//                openCamera()
-                takePhoto()
+                showSingleChoiceDialog()
             }
 
             override fun onShowFileChooser(webView: WebView, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams?): Boolean {
                 Log.v(TAG, "onShowFileChooser-------------" + Const.URL)
                 mUploadCallbackAboveL = filePathCallback
-//                openCamera()
-                takePhoto()
+                showSingleChoiceDialog()
                 return true
             }
 
@@ -111,10 +119,108 @@ class WebActivity : Activity() {
     }
 
     private val REQUEST_CODE: Int = 101
+    private val REQUEST_PERMISSION_CODE: Int = 102
 
     private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, REQUEST_CODE)
+        when (which) {
+            0 -> {
+                // 步骤一：创建存储照片的文件
+                val path = filesDir.toString() + File.separator + "images" + File.separator
+                val file = File(path, System.currentTimeMillis().toString() + "_head.jpg")
+                if (!file.parentFile.exists()) {
+                    var re = file.parentFile.mkdirs()
+                    if (re) {
+
+                    } else {
+                        Toast.makeText(this@WebActivity, "文件创建失败", Toast.LENGTH_SHORT).show()
+                    }
+                }else{
+                    Toast.makeText(this@WebActivity, "正在启动", Toast.LENGTH_SHORT).show()
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    //步骤二：Android 7.0及以上获取文件 Uri
+                    imageUri = FileProvider.getUriForFile(this@WebActivity, packageName, file)
+                } else {
+                    //步骤三：获取文件Uri
+                    imageUri = Uri.fromFile(file)
+                }
+                Log.v(TAG, "head 路径===" + imageUri?.path)
+                //步骤四：调取系统拍照
+                val intent = Intent("android.media.action.IMAGE_CAPTURE")
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                startActivityForResult(intent, REQUEST_CODE)
+            }
+            else -> {
+                takePhoto()
+            }
+        }
+
+    }
+
+    //检查权限
+    private fun checkPermission(): Boolean {
+        //是否有权限
+        val haveCameraPermission = ContextCompat.checkSelfPermission(this@WebActivity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+
+        val haveWritePermission = ContextCompat.checkSelfPermission(this@WebActivity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+
+        return haveCameraPermission && haveWritePermission
+
+    }
+
+    // 请求所需权限
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private fun requestPermissions() {
+        requestPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION_CODE)
+    }
+
+    // 请求权限后会在这里回调
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_PERMISSION_CODE -> {
+                var allowAllPermission = false
+                for (i in grantResults.indices) {
+                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {//被拒绝授权
+                        allowAllPermission = false
+                        break
+                    }
+                    allowAllPermission = true
+                }
+                if (allowAllPermission) {
+                    //开始拍照或从相册选取照片
+                    openCamera()
+                } else {
+                    Toast.makeText(this@WebActivity, "该功能需要授权方可使用", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    var which = 0
+    private fun showSingleChoiceDialog() {
+        var dialog: AlertDialog? = null
+        var single_list = arrayOf("拍照", "相册")
+        var builder = AlertDialog.Builder(this)
+        builder.setTitle("")
+        builder.setIcon(R.mipmap.ic_launcher)
+        builder.setSingleChoiceItems(single_list, 0) { p0, which ->
+            this@WebActivity.which = which
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkPermission()) {
+                    openCamera()
+                } else {
+                    requestPermissions()
+                }
+            } else {
+                openCamera()
+            }
+            dialog?.dismiss()
+        }
+        dialog = builder.create()
+        dialog.show()
     }
 
     //相册
@@ -137,8 +243,10 @@ class WebActivity : Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101||requestCode == 100) {
-            imageUri = data!!.data
+        if (requestCode == REQUEST_CODE || requestCode == 100) {
+//            if (data != null) {
+//                imageUri = data.data
+//            }
             //针对5.0以上, 以下区分处理方法
             if (mUploadCallbackBelow != null) {
                 chooseBelow(resultCode, data)
@@ -162,7 +270,6 @@ class WebActivity : Activity() {
     private fun chooseAbove(resultCode: Int, data: Intent?) {
         if (Activity.RESULT_OK == resultCode) {
             updatePhotos()
-
             if (data != null) {
                 // 这里是针对从文件中选图片的处理, 区别是一个返回的URI, 一个是URI[]
                 val results: Array<Uri>
@@ -174,7 +281,7 @@ class WebActivity : Activity() {
                     mUploadCallbackAboveL!!.onReceiveValue(null)
                 }
             } else {
-                mUploadCallbackAboveL!!.onReceiveValue(arrayOf<Uri>(imageUri!!))
+                mUploadCallbackAboveL!!.onReceiveValue(arrayOf(imageUri!!))
             }
         } else {
             mUploadCallbackAboveL!!.onReceiveValue(null)
@@ -182,8 +289,8 @@ class WebActivity : Activity() {
         mUploadCallbackAboveL = null
     }
 
+    // 该广播即使多发（即选取照片成功时也发送）也没有关系，只是唤醒系统刷新媒体文件
     private fun updatePhotos() {
-        // 该广播即使多发（即选取照片成功时也发送）也没有关系，只是唤醒系统刷新媒体文件
         val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
         intent.data = imageUri
         sendBroadcast(intent)
@@ -270,18 +377,6 @@ class WebActivity : Activity() {
         @JavascriptInterface
         fun shareToQQ(url: String, title: String, content: String, imageUrl: String) {
             ShareUtil.shareToQQ(this@WebActivity, url, title, content, imageUrl)
-        }
-
-        @JavascriptInterface
-        fun getSomeThing() {
-            ShareUtil.shareUrl(
-                    this@WebActivity,
-                    "http://fangapp.8raw.com/#/",
-                    "测试标题",
-                    "测试描述",
-                    BitmapFactory.decodeResource(getResources(), R.mipmap.logo),
-                    1
-            )
         }
     }
 
