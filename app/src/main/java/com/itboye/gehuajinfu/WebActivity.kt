@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import android.widget.Toast
+import com.itboye.gehuajinfu.R.id.web_progress
 import com.itboye.gehuajinfu.util.Const
 import com.itboye.gehuajinfu.util.ShareUtil
 import com.itboye.gehuajinfu.util.ShareUtil.downLoadBitmap
@@ -80,7 +81,10 @@ class WebActivity : Activity() {
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, innerUrl: String?): Boolean {
-//                view.loadUrl("http://www.baidu.com")
+                if (innerUrl.equals("http://" + Const.HOST + "/")) {
+
+                } else
+                    view.loadUrl(innerUrl)
                 Log.v(TAG, "shouldOverrideUrlLoading-------------" + innerUrl)
                 return true
             }
@@ -134,7 +138,7 @@ class WebActivity : Activity() {
                     } else {
                         Toast.makeText(this@WebActivity, "文件创建失败", Toast.LENGTH_SHORT).show()
                     }
-                }else{
+                } else {
                     Toast.makeText(this@WebActivity, "正在启动", Toast.LENGTH_SHORT).show()
                 }
 

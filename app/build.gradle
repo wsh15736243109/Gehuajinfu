@@ -34,7 +34,7 @@ android {
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
                         def file = output.outputFile
-                        def fileName =  "gehuajinfu.apk"
+                        def fileName =  "革华金服.apk"
                         outputFileName = fileName
 //                        output.outputFileName = new File(file.parent, file Name)
                     }
