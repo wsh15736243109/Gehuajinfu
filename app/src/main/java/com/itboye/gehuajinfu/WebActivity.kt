@@ -138,17 +138,17 @@ class WebActivity : Activity() {
                     Toast.makeText(this@WebActivity, "正在启动", Toast.LENGTH_SHORT).show()
                 }
 
+                //步骤四：调取系统拍照
+                val intent = Intent("android.media.action.IMAGE_CAPTURE")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     //步骤二：Android 7.0及以上获取文件 Uri
                     imageUri = FileProvider.getUriForFile(this@WebActivity, packageName, file)
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 } else {
                     //步骤三：获取文件Uri
                     imageUri = Uri.fromFile(file)
                 }
                 Log.v(TAG, "head 路径===" + imageUri?.path)
-                //步骤四：调取系统拍照
-                val intent = Intent("android.media.action.IMAGE_CAPTURE")
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 startActivityForResult(intent, REQUEST_CODE)
             }
             else -> {
