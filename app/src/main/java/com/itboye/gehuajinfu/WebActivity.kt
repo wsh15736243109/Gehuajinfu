@@ -48,7 +48,7 @@ class WebActivity : Activity() {
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)//隐藏标题栏
+//        requestWindowFeature(Window.FEATURE_NO_TITLE)//隐藏标题栏
         setContentView(R.layout.activity_main)
         progress= ProgressDialog(this)
 //        progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);

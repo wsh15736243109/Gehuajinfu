@@ -11,6 +11,7 @@
         <item name="colorPrimary">@android:color/holo_green_dark</item>
         <item name="colorPrimaryDark">@android:color/holo_green_dark</item>
         <item name="colorAccent">@android:color/holo_green_dark</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
 </resources>
