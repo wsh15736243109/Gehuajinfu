@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,6 +20,7 @@ import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.View
 import android.webkit.*
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.itboye.gehuajinfu.R.id.web_progress
 import com.itboye.gehuajinfu.util.Const
@@ -41,11 +43,16 @@ class WebActivity : Activity() {
     private var mUploadCallbackBelow: ValueCallback<Uri>? = null
 
     private var mUploadCallbackAboveL: ValueCallback<Array<Uri>>? = null
-
+    var progress: ProgressDialog? = null
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        progress= ProgressDialog(this)
+//        progress!!.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress!!.setMessage("加载中,请稍后")
+        progress!!.setCanceledOnTouchOutside(false)
+        progress!!.show()
         webView.addJavascriptInterface(JSInterface(), "android")
         webSettings = webView.settings
         //设置支持JavaScript
@@ -67,6 +74,7 @@ class WebActivity : Activity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String?) {
                 super.onPageFinished(view, url)
+                progress!!.dismiss()
                 Log.v(TAG, "onPageFinished-------------" + url)
             }
 
@@ -77,11 +85,13 @@ class WebActivity : Activity() {
 
             override fun onReceivedError(view: WebView, request: WebResourceRequest?, error: WebResourceError?) {
                 super.onReceivedError(view, request, error)
+                progress!!.dismiss()
                 Log.v(TAG, "onReceivedError-------------" + error.toString())
             }
 
             override fun shouldOverrideUrlLoading(view: WebView, innerUrl: String?): Boolean {
-                if (innerUrl.equals("http://" + Const.HOST + "/")) {
+                progress!!.dismiss()
+                if (innerUrl.equals("https://" + Const.HOST + "/")) {
 
                 } else
                     view.loadUrl(innerUrl)
@@ -93,6 +103,7 @@ class WebActivity : Activity() {
             override fun onProgressChanged(view: WebView, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 if (newProgress == 100) {
+                    progress!!.dismiss()
                     web_progress.visibility = View.GONE
                 } else {
                     web_progress.visibility = View.VISIBLE
