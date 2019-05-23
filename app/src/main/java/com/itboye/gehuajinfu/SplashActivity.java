@@ -1,13 +1,9 @@
 package com.itboye.gehuajinfu;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SplashActivity extends Activity {
 
