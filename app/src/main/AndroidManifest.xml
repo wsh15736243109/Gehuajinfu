@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.itboye.gehuajinfu">
+          package="com.itboye.fangtianshi">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- SDK2.1新增获取用户位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -23,7 +22,7 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:screenOrientation="portrait"
-            android:name=".App"
+            android:name="com.itboye.fangtianshi.App"
             android:usesCleartextTraffic="true"
             android:theme="@style/AppTheme">
         <uses-library
@@ -31,16 +30,16 @@
                 android:required="false"/>
         <provider
                 android:name="android.support.v4.content.FileProvider"
-                android:authorities="com.itboye.gehuajinfu"
+                android:authorities="com.itboye.fangtianshi"
                 android:exported="false"
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".WebActivity"/>
+        <activity android:name="com.itboye.fangtianshi.WebActivity"/>
         <activity
-                android:name=".SplashActivity"
+                android:name="com.itboye.fangtianshi.SplashActivity"
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

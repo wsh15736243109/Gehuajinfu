@@ -1,4 +1,4 @@
-package com.itboye.gehuajinfu.util;
+package com.itboye.fangtianshi.util;
 
 import android.graphics.Bitmap;
 

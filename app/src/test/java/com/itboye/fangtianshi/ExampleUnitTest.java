@@ -1,4 +1,4 @@
-package com.itboye.gehuajinfu;
+package com.itboye.fangtianshi;
 
 import org.junit.Test;
 

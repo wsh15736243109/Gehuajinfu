@@ -1,15 +1,13 @@
-package com.itboye.gehuajinfu
+package com.itboye.fangtianshi
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,20 +17,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.webkit.*
-import android.widget.ProgressBar
 import android.widget.Toast
-import com.itboye.gehuajinfu.R.id.web_progress
-import com.itboye.gehuajinfu.util.Const
-import com.itboye.gehuajinfu.util.ShareUtil
-import com.itboye.gehuajinfu.util.ShareUtil.downLoadBitmap
+import com.itboye.fangtianshi.util.Const
+import com.itboye.fangtianshi.util.ShareUtil
+import com.itboye.fangtianshi.util.ShareUtil.downLoadBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.File.separator
-import com.itboye.gehuajinfu.util.ImageUtil.compressImage
-import java.io.FileNotFoundException
-import java.io.IOException
 
 
 class WebActivity : Activity() {

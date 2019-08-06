@@ -1,13 +1,12 @@
-package com.itboye.gehuajinfu;
+package com.itboye.fangtianshi;
 
 import android.app.Application;
-import com.itboye.gehuajinfu.util.Const;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.Tencent;
 
-import static com.itboye.gehuajinfu.util.Const.APP_ID;
-import static com.itboye.gehuajinfu.util.Const.TENCENT_APP_ID;
+import static com.itboye.fangtianshi.util.Const.APP_ID;
+import static com.itboye.fangtianshi.util.Const.TENCENT_APP_ID;
 
 public class App extends Application {
 

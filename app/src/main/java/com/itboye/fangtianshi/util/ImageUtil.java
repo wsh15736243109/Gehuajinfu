@@ -1,4 +1,4 @@
-package com.itboye.gehuajinfu.util;
+package com.itboye.fangtianshi.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

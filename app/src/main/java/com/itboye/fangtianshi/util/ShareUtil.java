@@ -1,4 +1,4 @@
-package com.itboye.gehuajinfu.util;
+package com.itboye.fangtianshi.util;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -7,9 +7,8 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import com.itboye.gehuajinfu.App;
-import com.itboye.gehuajinfu.R;
-import com.itboye.gehuajinfu.WebActivity;
+import com.itboye.fangtianshi.App;
+import com.itboye.fangtianshi.R;
 import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
